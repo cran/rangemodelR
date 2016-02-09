@@ -2,11 +2,12 @@
 % Please edit documentation in R/neigh_ob.R
 \name{neigh_ob}
 \alias{neigh_ob}
-\title{a spatial adjecency data for the polygon grid 'shp'}
+\title{Spatial Adjecency Data for the Polygon Grid 'shp'}
 \format{an object of class 'nb'}
 \description{
 A spatial adjecency object of class 'nb' for the polygon shapefile 'shp'.
 See documentation for \code{\link[spdep]{card}} for details on
-structure of the object.
+structure of the object.The neighbours are according to 'queen's move' i.e
+sharing atleast one corner. So each cell can have upto eight neibours.
 }
 

@@ -4,18 +4,18 @@
 \name{rangemodelR-package}
 \alias{rangemodelR}
 \alias{rangemodelR-package}
-\title{impliments range cohesion models}
+\title{Mid-Domain Effect and Species Richness Patterns}
 \description{
-impliments range scatter and range cohesion models
+Range Cohesion and Range Scatter Models in R
 }
 \details{
 \tabular{ll}{
 Package: \tab rangemodelR\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
+Version: \tab 1.0\cr
 Date: \tab 2015-08-09\cr
 License: \tab GPL (>= 2)\cr
-LazyLoad: \tab yes\cr
+LazyLoad: \tab No\cr
 }
 
 The package is usefull for generating randomized community matrices under

@@ -2,10 +2,10 @@
 % Please edit documentation in R/rangemod_2d.R
 \name{rangemod.2d}
 \alias{rangemod.2d}
-\title{Range cohesion models for spatial polygon grids}
+\title{Range Cohesion Models for Spatial Polygon Grids}
 \usage{
-rangemod.2d(spmat, shp, field, nb, rsize = c("observed", "unif"), var, reps,
-  degen, first)
+rangemod.2d(spmat, shp, field, nb, rsize = c("observed", "unif"),
+  var = NULL, reps, degen = FALSE, first = FALSE)
 }
 \arguments{
 \item{spmat}{a site by species matrix or data frame with species in columns}
@@ -37,18 +37,19 @@ well.if 'var' is null, first is always set 'FALSE'}
 \value{
 A list containing following elements:
 \itemize{
- \item{"out.df"}{ a data frame with two columns 'mod.rich' and 'sd.rich'
-                   with mean and standard deviation respectively of the
-                   predicted species richness }
- \item{"out.shp"}{ same as the input shapefile with the two colums of
-                   'out.df' added in attribute table}
+ \item{"out.df"}{ a data frame with four columns for mean, standard
+                  deviation, lower and upper limits of confidence intervals
+                  of predicted species richness }
+ \item{"out.shp"}{ same as the input shapefile with additional the four
+                   colums of 'out.df' in attribute table}
  \item{"degenerate.matrices"} {a list of all the randomized matrices(only
                                present if 'degen' is TRUE)}
  }
 }
 \description{
-species richness model for two dimentional grid with geometric
-             constraints and range cohesion
+rangemod.2d takes observed site by species matrix and returns
+              expected species richness values of each site based on user
+              defined neighbour relationships.
 }
 \details{
 rangemod.2d impliments simulations used by Rahbeck et.al. (2007) to
@@ -67,25 +68,25 @@ rangemod.2d impliments simulations used by Rahbeck et.al. (2007) to
          is selected.
 }
 \examples{
-\dontrun{
 data(shp)
 data(neigh_ob)
 data(spmat)
 library(ggplot2)
-library(plyr)
-mod.out <- rangemod.2d(spmat,shp,"NUMMER",nb = neigh_ob,rsize = "observed",
-                       var = NULL,reps = 5,degen = F,first = F)
+library(rgeos)
+library(maptools)
+mod.out <- rangemod.2d(spmat,shp,"ID",nb = neigh_ob,rsize = "observed",
+                       var = NULL,reps = 5)
 shp.out <- mod.out$out.shp
-shp.out$id <- shp.out@data[,"NUMMER"]
-shp.out.df <- as.data.frame(shp.out)
-shp.out.fort <- fortify(shp.out,region = "id")
-shp.out.gg <- join(shp.out.fort,shp.out.df,by = "id")
+shp.out.df <- shp.out@data
+shp.out.fort <- fortify(shp.out,region = "ID")
+seq <- match(shp.out.fort$id,shp.out.df$ID)
+shp.out.gg <- data.frame(shp.out.fort,shp.out.df[seq,])
 ggplot(shp.out.gg)+
-  geom_map(map=shp.out.gg,aes_string("long","lat",map_id="NUMMER",
+  geom_map(map=shp.out.gg,aes_string("long","lat",map_id="id",
                                      fill = "mod.rich"))+
   geom_path(aes(x = long,y = lat,group = group),colour = "white")+
-  coord_equal()
-}
+  coord_equal() + theme_bw()+
+  scale_fill_continuous(low = "white",high = "black")
 }
 \references{
 Rahbek, C., Gotelli, N., Colwell, R., Entsminger, G., Rangel,

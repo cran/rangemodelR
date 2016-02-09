@@ -2,9 +2,9 @@
 % Please edit documentation in R/rangemodel_1d.R
 \name{rangemod.1d}
 \alias{rangemod.1d}
-\title{rangemod.1d - range cohesion model for ordered (and non spatial) data}
+\title{Range Cohesion Model for Ordered (and Non-spatial) Data}
 \usage{
-rangemod.1d(spmat, nb = NULL, var = NULL, first = F, degen = F,
+rangemod.1d(spmat, nb = NULL, var = NULL, first = FALSE, degen = FALSE,
   rsize = c("observed", "unif"), reps)
 }
 \arguments{
@@ -31,12 +31,14 @@ vector of same length as number of species(collumns) or either
 \item{reps}{number of replicates}
 }
 \value{
-If degen is FALSE, a data frame with two colums for mean and SD
-       of expected richness
+If degen is FALSE, a data frame with four colums for mean, SD and
+       confidence intervals of expected richness
 
 \itemize{
  \item{"mod.rich"}{ mean richness of each site}
  \item{"mod.sd"}{ standard deviation of species richness}
+ \item{"q2.5"}{ lower limit of the confidence interval}
+ \item{"q97.5"}{ upper limit of the confidence interval}
 }
        If degen is TRUE, then a list containing above data frame and a list
        of all the randomized matrices
@@ -60,18 +62,13 @@ rangemod.1d impliments simulations used by Rahbeck et.al (2007) to
          same length as number of species.
 }
 \examples{
-\dontrun{
- tempmat <- matrix(0,nrow=10,ncol=200,dimnames=list(letters[1:10],1:200))
-
+tempmat <- matrix(0,nrow=10,ncol=200,dimnames=list(letters[1:10],1:200))
 tempmat <- as.matrix(apply(tempmat,2,function(x){rbinom(nrow(tempmat),1,
                      runif(1,0.1,1))}))
 rownames(tempmat) <- letters[1:10]
-reps <- 100
-temp <- rangemod.1d(tempmat,nb = NULL,var = NULL,first = F,degen = F,
-                   rsize = "observed",reps)
-plot(temp[,1],ylim= c(min(temp[,1] -2),max(temp[,1]+2)),pch = 16)
-
-segments(1:10,y0=temp[,1]-temp[,2],y1= temp[,1]+temp[,2])}
+temp <- rangemod.1d(tempmat,nb = NULL,var = NULL,rsize = "observed",reps = 5)
+plot(temp[,1],ylim= c(min(temp[,1] -2),max(temp[,1]+2)),pch = 16,ylab = 'Species Richness')
+segments(1:10,y0=temp[,1]-temp[,2],y1= temp[,1]+temp[,2])
 }
 \references{
 Rahbek, C., Gotelli, N., Colwell, R., Entsminger, G., Rangel, T.
