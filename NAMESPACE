@@ -3,3 +3,5 @@
 export(random.range)
 export(rangemod.1d)
 export(rangemod.2d)
+export(rangemod1d)
+export(rangemod2d)

@@ -1,8 +1,6 @@
 #' Range Cohesion Model for Ordered (and Non-spatial) Data
-#' @description rangemod.1d takes observed site by species matrix and returns
-#'               expected species richness values of each site.
-#'               '\code{rangemod.1d}' is deprecated.
-#'               Use '\code{\link{rangemod1d}}' instead.
+#' @description rangemod1d takes observed site by species matrix and returns
+#'               expected species richness values of each site
 #' @param spmat a site by species matrix or data frame with species in columns
 #' @param reps number of replicates
 #' @param nb a neighbour object similar to one generated with
@@ -18,7 +16,7 @@
 #' @param rsize which rangesizes to use for simulation, can be an integer
 #'        vector of same length as number of species(collumns) or either
 #'        'observed' or'unif'. See details for explanations
-#' @details rangemod.1d impliments simulations used by Rahbeck et.al (2007) to
+#' @details rangemod1d impliments simulations used by Rahbeck et.al (2007) to
 #'          data which are only in form of a site by species matrix and without
 #'          any spatial information. A list similar to an nb object of spdep can
 #'          prepared according to order in which the rows (sites) are arranged.
@@ -52,19 +50,17 @@
 #'              Green, J.L. (2009) Patterns and causes of species richness:
 #'              a general simulation model for macroecology. Ecology Letters,
 #'              12, 873-886.
-#' @examples \dontrun{
+#' @examples
 #' tempmat <- matrix(0,nrow=10,ncol=200,dimnames=list(letters[1:10],1:200))
 #' tempmat <- as.matrix(apply(tempmat,2,function(x){rbinom(nrow(tempmat),1,
 #'                      runif(1,0.1,1))}))
 #' rownames(tempmat) <- letters[1:10]
-#' temp <- rangemod.1d(tempmat,nb = NULL,var = NULL,rsize = "observed",reps = 5)
+#' temp <- rangemod1d(tempmat,nb = NULL,var = NULL,rsize = "observed",reps = 5)
 #' plot(temp[,1],ylim= c(min(temp[,1] -2),max(temp[,1]+2)),pch = 16,ylab = 'Species Richness')
 #' segments(1:10,y0=temp[,1]-temp[,2],y1= temp[,1]+temp[,2])
-#' }
 #' @export
-rangemod.1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
+rangemod1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
                         rsize = c("observed","unif"),reps){
-  .Deprecated("rangemod1d")
   ####sanity check of arguments####
   if(!is.null(nb)){
     if(!is.na(nb)){

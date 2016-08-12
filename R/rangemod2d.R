@@ -1,9 +1,7 @@
 #' Range Cohesion Models for Spatial Polygon Grids
-#' @description rangemod.2d takes observed site by species matrix and returns
+#' @description rangemod2d takes observed site by species matrix and returns
 #'               expected species richness values of each site based on user
 #'               defined neighbour relationships.
-#'               '\code{rangemod.2d}' is deprecated.
-#'               Use '\code{\link{rangemod2d}}' instead.
 #' @param spmat a site by species matrix or data frame with species in columns
 #' @param shp shapefile of sites where species occurences are recorded
 #' @param reps number of replicates
@@ -21,7 +19,7 @@
 #' @param rsize which rangesizes to use for simulation, can be an integer vector
 #'        of same length as number of species(collumns)
 #'        or either 'observed' or'unif'. See details for explanations
-#' @details rangemod.2d impliments simulations used by Rahbeck et.al. (2007) to
+#' @details rangemod2d impliments simulations used by Rahbeck et.al. (2007) to
 #'          species distribution data on a continuous grid. In 'spmat' the sites
 #'          (rows) represent each cell in the grid.The species occurences across
 #'          sites are randomly spread maintaining strict range cohesion.
@@ -56,12 +54,12 @@
 #'              Green, J.L. (2009) Patterns and causes of species richness:
 #'              a general simulation model for macroecology. Ecology Letters,
 #'              12, 873-886.
-#' @examples \dontrun{
+#' @examples
 #' if(require(rgdal)&&require(maptools)&&require(rgeos)&&require(ggplot2)){
 #' data(shp)
 #' data(neigh_ob)
 #' data(spmat)
-#' mod.out <- rangemod.2d(spmat,shp,"ID",nb = neigh_ob,rsize = "observed",
+#' mod.out <- rangemod2d(spmat,shp,"ID",nb = neigh_ob,rsize = "observed",
 #'                        var = NULL,reps = 5)
 #' shp.out <- mod.out$out.shp
 #' shp.out.df <- shp.out@@data
@@ -75,11 +73,9 @@
 #'   coord_equal() + theme_bw()+
 #'   scale_fill_continuous(low = "white",high = "black")
 #' }
-#' }
 #' @export
-rangemod.2d <- function(spmat,shp,field,nb,rsize = c("observed","unif"),
+rangemod2d <- function(spmat,shp,field,nb,rsize = c("observed","unif"),
                         var = NULL, reps,degen = FALSE,first = FALSE){
-  .Deprecated("rangemod2d")
   if (!requireNamespace("maptools", quietly = TRUE)) {
     stop("'maptools' is needed for this function to work. Please install it.",
          call. = FALSE)
