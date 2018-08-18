@@ -67,7 +67,7 @@
 #' seq <- match(shp.out.fort$id,shp.out.df$ID)
 #' shp.out.gg <- data.frame(shp.out.fort,shp.out.df[seq,])
 #' ggplot(shp.out.gg)+
-#'   geom_map(map=shp.out.gg,aes_string("long","lat",map_id="id",
+#'   geom_map(map=shp.out.gg,aes_string(map_id="id",
 #'                                      fill = "mod.rich"))+
 #'   geom_path(aes(x = long,y = lat,group = group),colour = "white")+
 #'   coord_equal() + theme_bw()+
@@ -86,7 +86,7 @@ rangemod2d <- function(spmat,shp,field,nb,rsize = c("observed","unif"),
     stop("all unique ids in 'shp' should appear in 'spmat'")
   }
 
-  if(!is.na(nb)&&!length(nb) == nrow(spmat)){
+  if(!is.null(nb)&&!length(nb) == nrow(spmat)){
     stop("length of 'nb' should be same as number of sites: ",
          length(nb)," and ", nrow(spmat))
   }
@@ -107,6 +107,7 @@ rangemod2d <- function(spmat,shp,field,nb,rsize = c("observed","unif"),
   }
 
   ####chunk1 - prepare objects for input and output####
+  uid <- shp@data[,field]
   spmat[spmat>0] <- 1
   spmat <- as.matrix(spmat)
   keep <- which(colSums(spmat) > 0)
@@ -118,10 +119,14 @@ rangemod2d <- function(spmat,shp,field,nb,rsize = c("observed","unif"),
     range.size <- switch(rsize,observed = {colSums(spmat)},
                          unif = {sample(1:nrow(spmat),ncol(spmat),replace = T)})
   }
+  #add site names to the nb object
+  nb <- lapply(nb,function(x)uid[x])
+  names(nb) <- uid
+
   mat.temp <- as.matrix(spmat)
   mat.out <- matrix(nrow = nrow(spmat),ncol = reps,
                     dimnames = list(rownames(spmat),1:reps))
-  uid <- shp@data[,field]
+
   degen.mats <- list()
 
   ####chunk2 - use 'random.range' to spread ranges on the matrix####

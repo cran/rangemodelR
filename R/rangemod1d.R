@@ -3,14 +3,12 @@
 #'               expected species richness values of each site
 #' @param spmat a site by species matrix or data frame with species in columns
 #' @param reps number of replicates
-#' @param nb a neighbour object similar to one generated with
-#'        '\code{\link[spdep]{poly2nb}}' of '\pkg{\link[spdep]{spdep}}'.
-#'        If NULL then a list resembling object of class 'nb' is created.
-#'        If NA then result is range scatter.
 #' @param var an optional vector containing explanatory variable for
-#'        constraining the randomization
+#'        constraining the randomization. It should be NULL when absent
 #' @param first If TRUE, 'var' is used while choosing the first occurence as
 #'        well.if 'var' is null, first is always set 'FALSE'
+#' @param cohesion If true, species distributions are without gaps
+#'                 i.e. result is range cohesion, otherwise it is range scatter
 #' @param degen If true, each randomized site by species matrix is saved and
 #'        provided in output
 #' @param rsize which rangesizes to use for simulation, can be an integer
@@ -55,23 +53,16 @@
 #' tempmat <- as.matrix(apply(tempmat,2,function(x){rbinom(nrow(tempmat),1,
 #'                      runif(1,0.1,1))}))
 #' rownames(tempmat) <- letters[1:10]
-#' temp <- rangemod1d(tempmat,nb = NULL,var = NULL,rsize = "observed",reps = 5)
+#' temp <- rangemod1d(tempmat,cohesion = TRUE,var = NULL,rsize = "observed",reps = 5)
 #' plot(temp[,1],ylim= c(min(temp[,1] -2),max(temp[,1]+2)),pch = 16,ylab = 'Species Richness')
 #' segments(1:10,y0=temp[,1]-temp[,2],y1= temp[,1]+temp[,2])
 #' @export
-rangemod1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
+rangemod1d <- function(spmat,var = NULL,cohesion = T,
+                       first = FALSE,degen = FALSE,
                         rsize = c("observed","unif"),reps){
   ####sanity check of arguments####
-  if(!is.null(nb)){
-    if(!is.na(nb)){
-      if(!length(nb) == nrow(spmat)){
-        stop("length of 'nb' should be same as number of sites: ",
-             length(nb)," and ", nrow(spmat))
-      }
-    }
-  }
 
-  if(!is.null(var)&& !length(var) == nrow(spmat)){
+  if(!is.null(var)&!length(var) == nrow(spmat)){
     stop("'var' should be of same length as number of sites: ",
          length(var)," and ",nrow(spmat),".")
   }
@@ -98,10 +89,11 @@ rangemod1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
     range.size <- switch(rsize,observed = {colSums(spmat)},
                          unif = {sample(1:nrow(spmat),ncol(spmat),replace = T)})
   }
+
   ##sanity check for 'first'
-  suppressWarnings(if(is.null(var)){
+  if(is.null(var)){
     first <- FALSE
-  }else{first})
+  }else{first}
 
   mat.temp <- spmat
   mat.out <- matrix(nrow = nrow(spmat),ncol = reps,
@@ -109,15 +101,16 @@ rangemod1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
   degen.mats <- list()
 
   ####chunk2- get neighbour list####
-
-  suppressWarnings(if(is.null(nb)){
+  if(cohesion == T){
     nblist <- list()
-    nblist[[1]] <- 2
-    nblist[[nrow(spmat)]] <- nrow(spmat)-1
+    nblist[[1]] <- rownames(spmat)[2]
+    nblist[[nrow(spmat)]] <- rownames(spmat)[nrow(spmat)-1]
     for(i in 2:(nrow(spmat)-1)){
-      nblist[[i]] <- c(i-1,i+1)
+      nblist[[i]] <- rownames(spmat)[c(i-1,i+1)]
     }
-  }else{nblist <- nb})
+    names(nblist) <- rownames(spmat)
+  }else{nblist <- NULL}
+
 
 
   ####chunk3- spread each range in matrix####
@@ -128,7 +121,7 @@ rangemod1d <- function(spmat,nb = NULL,var = NULL,first = FALSE,degen = FALSE,
       temp.vec1 <- random.range(uid = rownames(spmat),
                                 nb=nblist,range.size = range.size[k],
                                 var,first)
-      mat.temp[which(rownames(mat.temp)%in%as.character(temp.vec1)),k] <- 1
+      mat.temp[rownames(mat.temp)%in%as.character(temp.vec1),k] <- 1
     }
     mat.out[,j] <- rowSums(mat.temp)
     if(degen == TRUE){degen.mats[[j]] <- mat.temp}
