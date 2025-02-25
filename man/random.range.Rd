@@ -15,17 +15,17 @@ random.range(uid, nb, range.size, var, first)
 
 \item{var}{an optional vector of variables for constraining the randomization}
 
-\item{first}{If true, var is used while choosing the first occurence as well.
+\item{first}{If true, var is used while choosing the first occurrence as well.
 if var is null, first is always set FALSE}
 }
 \value{
-a numeric vector specifying selected possitions in 'uid'
+a numeric vector specifying selected positions in 'uid'
 }
 \description{
-random.range is used within other rangemodel functions to
-             radomly place given number of species occurences
+It is used within other functions in this package to
+             radomly place given number of species occurrences
 }
 \details{
 this function is not intended for any direct use but is called
-          within other functions of 'rangemodelR'.
+          within other functions of this package.
 }
